@@ -1,0 +1,205 @@
+version: "3.8"
+
+# ============================================================
+# ClickHouse Cluster
+# - 3 Keeper nodes (quorum coordination)
+# - 4 ClickHouse nodes (2 shards x 2 replicas)
+# ============================================================
+
+x-clickhouse-defaults: &clickhouse-defaults
+  image: clickhouse/clickhouse-server:${CLICKHOUSE_VERSION:-26.5}
+  restart: unless-stopped
+  ulimits:
+    nofile:
+      soft: 262144
+      hard: 262144
+  depends_on:
+    keeper-01:
+      condition: service_healthy
+    keeper-02:
+      condition: service_healthy
+    keeper-03:
+      condition: service_healthy
+  networks:
+    - cluster_network
+
+x-keeper-defaults: &keeper-defaults
+  image: clickhouse/clickhouse-server:${CLICKHOUSE_VERSION:-26.5}
+  restart: unless-stopped
+  networks:
+    - cluster_network
+
+services:
+
+  # ============================================================
+  # KEEPER NODES
+  # ============================================================
+
+  keeper-01:
+    <<: *keeper-defaults
+    container_name: keeper-01
+    hostname: keeper-01
+    volumes:
+      - keeper01_data:/var/lib/clickhouse
+      - keeper01_logs:/var/log/clickhouse-server
+      - ./config/keeper01/keeper.xml:/etc/clickhouse-server/config.d/keeper.xml:ro
+    ports:
+      - "${KEEPER01_PORT:-9181}:9181"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  keeper-02:
+    <<: *keeper-defaults
+    container_name: keeper-02
+    hostname: keeper-02
+    volumes:
+      - keeper02_data:/var/lib/clickhouse
+      - keeper02_logs:/var/log/clickhouse-server
+      - ./config/keeper02/keeper.xml:/etc/clickhouse-server/config.d/keeper.xml:ro
+    ports:
+      - "${KEEPER02_PORT:-9182}:9181"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  keeper-03:
+    <<: *keeper-defaults
+    container_name: keeper-03
+    hostname: keeper-03
+    volumes:
+      - keeper03_data:/var/lib/clickhouse
+      - keeper03_logs:/var/log/clickhouse-server
+      - ./config/keeper03/keeper.xml:/etc/clickhouse-server/config.d/keeper.xml:ro
+    ports:
+      - "${KEEPER03_PORT:-9183}:9181"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ============================================================
+  # CLICKHOUSE NODES
+  # ============================================================
+
+  ch-node-01:
+    <<: *clickhouse-defaults
+    container_name: ch-node-01
+    hostname: ch-node-01
+    volumes:
+      - ch_node01_data:/var/lib/clickhouse
+      - ch_node01_logs:/var/log/clickhouse-server
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/node01/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
+      - ./config/node01/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${CH_NODE01_HTTP:-8123}:8123"
+      - "${CH_NODE01_TCP:-9000}:9000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  ch-node-02:
+    <<: *clickhouse-defaults
+    container_name: ch-node-02
+    hostname: ch-node-02
+    volumes:
+      - ch_node02_data:/var/lib/clickhouse
+      - ch_node02_logs:/var/log/clickhouse-server
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/node02/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
+      - ./config/node02/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${CH_NODE02_HTTP:-8124}:8123"
+      - "${CH_NODE02_TCP:-9001}:9000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  ch-node-03:
+    <<: *clickhouse-defaults
+    container_name: ch-node-03
+    hostname: ch-node-03
+    volumes:
+      - ch_node03_data:/var/lib/clickhouse
+      - ch_node03_logs:/var/log/clickhouse-server
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/node03/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
+      - ./config/node03/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${CH_NODE03_HTTP:-8125}:8123"
+      - "${CH_NODE03_TCP:-9002}:9000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  ch-node-04:
+    <<: *clickhouse-defaults
+    container_name: ch-node-04
+    hostname: ch-node-04
+    volumes:
+      - ch_node04_data:/var/lib/clickhouse
+      - ch_node04_logs:/var/log/clickhouse-server
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/node04/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
+      - ./config/node04/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${CH_NODE04_HTTP:-8126}:8123"
+      - "${CH_NODE04_TCP:-9003}:9000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+# ============================================================
+# VOLUMES — one per container, data survives restarts
+# ============================================================
+volumes:
+  keeper01_data:
+  keeper01_logs:
+  keeper02_data:
+  keeper02_logs:
+  keeper03_data:
+  keeper03_logs:
+  ch_node01_data:
+  ch_node01_logs:
+  ch_node02_data:
+  ch_node02_logs:
+  ch_node03_data:
+  ch_node03_logs:
+  ch_node04_data:
+  ch_node04_logs:
+
+# ============================================================
+# NETWORK — all 7 containers on the same bridge network
+# ============================================================
+networks:
+  cluster_network:
+    driver: bridge
