@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <listen_host>::</listen_host>
+    <http_port>8124</http_port>
+    <tcp_port>9001</tcp_port>
+    <interserver_http_port>9009</interserver_http_port>
+
+    <!-- Node's own hostname — used for inter-replica communication -->
+    <interserver_http_host>ch-node-02</interserver_http_host>
+
+    <logger>
+        <level>warning</level>
+        <console>1</console>
+    </logger>
+
+    <query_log>
+        <database>system</database>
+        <table>query_log</table>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_log>
+
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+</clickhouse>

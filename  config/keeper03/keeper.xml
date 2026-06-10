@@ -5,7 +5,7 @@
         <server_id>3</server_id>
 
         <!-- Where CH nodes connect to reach Keeper -->
-        <tcp_port>9181</tcp_port>
+        <tcp_port>9183</tcp_port>
 
         <!-- Where Keeper stores its state -->
         <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>

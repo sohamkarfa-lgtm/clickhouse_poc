@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<clickhouse>
+
+    <profiles>
+        <default>
+            <max_memory_usage>4000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+        </default>
+        <readonly>
+            <readonly>1</readonly>
+        </readonly>
+    </profiles>
+
+    <quotas>
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+            </interval>
+        </default>
+    </quotas>
+
+    <users>
+        <!-- Developer user: full access -->
+        <dev_user>
+            <password>dev_password</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+            <access_management>1</access_management>
+        </dev_user>
+
+        <!-- Read-only: for demos and external tools -->
+        <readonly_user>
+            <password>readonly_password</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>readonly</profile>
+            <quota>default</quota>
+        </readonly_user>
+    </users>
+
+</clickhouse>
