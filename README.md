@@ -76,3 +76,25 @@ docker compose down -v
 # View logs for a specific node
 docker compose logs -f ch-node-01
 ```
+## WSL2 Setup Note — Docker DNS Fix (Required)
+
+If containers can't resolve each other's hostnames (e.g. `keeper-01`, `ch-node-01`)
+and you see errors like `Cannot resolve any of provided ZooKeeper hosts due to DNS error`,
+WSL2's `/etc/resolv.conf` is overriding Docker's embedded DNS.
+
+**Fix (one-time, per machine):**
+
+```bash
+sudo mkdir -p /etc/docker
+echo '{
+  "dns": ["8.8.8.8", "1.1.1.1"]
+}' | sudo tee /etc/docker/daemon.json
+
+sudo service docker restart
+```
+
+Verify it worked:
+```bash
+docker exec ch-node-01 getent hosts keeper-01
+# should return an IP address, not empty
+```
