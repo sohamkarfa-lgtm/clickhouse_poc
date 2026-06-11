@@ -9,11 +9,11 @@
         </node>
         <node>
             <host>keeper-02</host>
-            <port>9182</port>
+            <port>9181</port>
         </node>
         <node>
             <host>keeper-03</host>
-            <port>9183</port>
+            <port>9181</port>
         </node>
     </zookeeper>
 
@@ -31,7 +31,7 @@
                 </replica>
                 <replica>
                     <host>ch-node-02</host>
-                    <port>9001</port>
+                    <port>9000</port>
                     <user>dev_user</user>
                     <password>dev_password</password>
                 </replica>
@@ -42,13 +42,13 @@
                 <internal_replication>true</internal_replication>
                 <replica>
                     <host>ch-node-03</host>
-                    <port>9002</port>
+                    <port>9000</port>
                     <user>dev_user</user>
                     <password>dev_password</password>
                 </replica>
                 <replica>
                     <host>ch-node-04</host>
-                    <port>9003</port>
+                    <port>9000</port>
                     <user>dev_user</user>
                     <password>dev_password</password>
                 </replica>
