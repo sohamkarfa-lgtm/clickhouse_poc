@@ -44,7 +44,7 @@ services:
     ports:
       - "${KEEPER01_PORT:-9181}:9181"
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181 && echo -e \"ruok\" >&3 && timeout 1 cat <&3' | grep imok"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -61,7 +61,7 @@ services:
     ports:
       - "${KEEPER02_PORT:-9182}:9181"
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181 && echo -e \"ruok\" >&3 && timeout 1 cat <&3' | grep imok"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -78,7 +78,7 @@ services:
     ports:
       - "${KEEPER03_PORT:-9183}:9181"
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 1 localhost 9181 || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9181 && echo -e \"ruok\" >&3 && timeout 1 cat <&3' | grep imok"]
       interval: 10s
       timeout: 5s
       retries: 10
