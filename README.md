@@ -98,3 +98,18 @@ Verify it worked:
 docker exec ch-node-01 getent hosts keeper-01
 # should return an IP address, not empty
 ```
+
+## Failover Testing
+```bash
+# Stop a replica — Distributed queries still work
+docker compose stop ch-node-02
+docker exec ch-node-01 clickhouse-client --user=dev_user --password=dev_password \
+  --query "SELECT count() FROM datasets.hits_v1"
+docker compose start ch-node-02
+
+# Stop a Keeper node — quorum (2/3) holds
+docker compose stop keeper-03
+docker exec ch-node-01 clickhouse-client --user=dev_user --password=dev_password \
+  --query "SELECT * FROM system.zookeeper_connection"
+docker compose start keeper-03
+```
