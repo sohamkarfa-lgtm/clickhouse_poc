@@ -54,7 +54,11 @@ This POC demonstrates a production-like ClickHouse cluster with:
 ```bash
 git clone https://github.com/sohamkarfa-lgtm/clickhouse_poc.git
 cd clickhouse_poc
+cp .env.example .env
 ```
+
+Update `.env` before startup if you want to override the default ClickHouse credentials.
+The `CLICKHOUSE_USER` / `CLICKHOUSE_PASSWORD` and `CLICKHOUSE_READONLY_USER` / `CLICKHOUSE_READONLY_PASSWORD` values are used by both the node user config and the cluster replica credentials in `config/cluster.xml.tpl`.
 
 ### 2. Start the Cluster
 
@@ -344,8 +348,11 @@ docker exec ch-node-01 getent hosts keeper-01
 clickhouse_poc/
 ├── docker-compose.yml          # Cluster orchestration
 ├── config/
-│   ├── cluster.xml             # ClickHouse cluster definition
-│   ├── users.xml               # User credentials & permissions
+│   ├── cluster.xml.tpl         # ClickHouse cluster definition
+│   ├── users.xml.tpl           # User credentials & permissions
+    ├── render-config.sh        # Contains the renderer
+    ├── keeper0X
+    │   └── keeper.xml          # ClickHouse keeper configuration
 │   └── node0X/                 # Per-node configurations
 │       ├── macros.xml          # Shard/replica macros
 │       └── server.xml          # Node-specific settings
@@ -355,7 +362,12 @@ clickhouse_poc/
 ├── datasets/
 │   ├── hits_sample.tsv         # Sample hits data
 │   └── visits_sample.tsv       # Sample visits data
+├── sample_queries
+│   └──queries.sql              # POC demo queries
+├── .env                        # docker compose automatically loads from the repo root
+├── .gitignore
 └── README.md                   # This file
+
 ```
 
 ---

@@ -24,21 +24,21 @@
 
     <users>
         <!-- Developer user: full access -->
-        <dev_user>
-            <password>dev_password</password>
+        <${CLICKHOUSE_USER}>
+            <password>${CLICKHOUSE_PASSWORD}</password>
             <networks><ip>::/0</ip></networks>
             <profile>default</profile>
             <quota>default</quota>
             <access_management>1</access_management>
-        </dev_user>
+        </${CLICKHOUSE_USER}>
 
         <!-- Read-only: for demos and external tools -->
-        <readonly_user>
-            <password>readonly_password</password>
+        <${CLICKHOUSE_READONLY_USER}>
+            <password>${CLICKHOUSE_READONLY_PASSWORD}</password>
             <networks><ip>::/0</ip></networks>
             <profile>readonly</profile>
             <quota>default</quota>
-        </readonly_user>
+        </${CLICKHOUSE_READONLY_USER}>
     </users>
 
 </clickhouse>

@@ -26,14 +26,14 @@
                 <replica>
                     <host>ch-node-01</host>
                     <port>9000</port>
-                    <user>dev_user</user>
-                    <password>dev_password</password>
+                    <user>${CLICKHOUSE_USER}</user>
+                    <password>${CLICKHOUSE_PASSWORD}</password>
                 </replica>
                 <replica>
                     <host>ch-node-02</host>
                     <port>9000</port>
-                    <user>dev_user</user>
-                    <password>dev_password</password>
+                    <user>${CLICKHOUSE_USER}</user>
+                    <password>${CLICKHOUSE_PASSWORD}</password>
                 </replica>
             </shard>
 
@@ -43,14 +43,14 @@
                 <replica>
                     <host>ch-node-03</host>
                     <port>9000</port>
-                    <user>dev_user</user>
-                    <password>dev_password</password>
+                    <user>${CLICKHOUSE_USER}</user>
+                    <password>${CLICKHOUSE_PASSWORD}</password>
                 </replica>
                 <replica>
                     <host>ch-node-04</host>
                     <port>9000</port>
-                    <user>dev_user</user>
-                    <password>dev_password</password>
+                    <user>${CLICKHOUSE_USER}</user>
+                    <password>${CLICKHOUSE_PASSWORD}</password>
                 </replica>
             </shard>
 

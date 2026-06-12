@@ -18,6 +18,12 @@ x-clickhouse-defaults: &clickhouse-defaults
       condition: service_healthy
     keeper-03:
       condition: service_healthy
+  environment:
+    - CLICKHOUSE_USER
+    - CLICKHOUSE_PASSWORD
+    - CLICKHOUSE_READONLY_USER
+    - CLICKHOUSE_READONLY_PASSWORD
+    - CLICKHOUSE_SKIP_USER_SETUP=1
   networks:
     - cluster_network
 
@@ -92,14 +98,16 @@ services:
     <<: *clickhouse-defaults
     container_name: ch-node-01
     hostname: ch-node-01
+    entrypoint: ["/etc/clickhouse-server/render-configs.sh"]
     volumes:
       - ch_node01_data:/var/lib/clickhouse
       - ch_node01_logs:/var/log/clickhouse-server
-      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
-      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/render-configs.sh:/etc/clickhouse-server/render-configs.sh:ro
+      - ./config/cluster.xml.tpl:/etc/clickhouse-server/config.d/cluster.xml.tpl:ro
+      - ./config/users.xml.tpl:/etc/clickhouse-server/users.d/users.xml.tpl:ro
       - ./config/node01/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
       - ./config/node01/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
-      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./init_scripts:/docker-entrypoint-initdb.d:ro
     ports:
       - "${CH_NODE01_HTTP:-8123}:8123"
       - "${CH_NODE01_TCP:-9000}:9000"
@@ -114,14 +122,16 @@ services:
     <<: *clickhouse-defaults
     container_name: ch-node-02
     hostname: ch-node-02
+    entrypoint: ["/etc/clickhouse-server/render-configs.sh"]
     volumes:
       - ch_node02_data:/var/lib/clickhouse
       - ch_node02_logs:/var/log/clickhouse-server
-      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
-      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/render-configs.sh:/etc/clickhouse-server/render-configs.sh:ro
+      - ./config/cluster.xml.tpl:/etc/clickhouse-server/config.d/cluster.xml.tpl:ro
+      - ./config/users.xml.tpl:/etc/clickhouse-server/users.d/users.xml.tpl:ro
       - ./config/node02/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
       - ./config/node02/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
-      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./init_scripts:/docker-entrypoint-initdb.d:ro
     ports:
       - "${CH_NODE02_HTTP:-8124}:8123"
       - "${CH_NODE02_TCP:-9001}:9000"
@@ -136,14 +146,16 @@ services:
     <<: *clickhouse-defaults
     container_name: ch-node-03
     hostname: ch-node-03
+    entrypoint: ["/etc/clickhouse-server/render-configs.sh"]
     volumes:
       - ch_node03_data:/var/lib/clickhouse
       - ch_node03_logs:/var/log/clickhouse-server
-      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
-      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/render-configs.sh:/etc/clickhouse-server/render-configs.sh:ro
+      - ./config/cluster.xml.tpl:/etc/clickhouse-server/config.d/cluster.xml.tpl:ro
+      - ./config/users.xml.tpl:/etc/clickhouse-server/users.d/users.xml.tpl:ro
       - ./config/node03/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
       - ./config/node03/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
-      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./init_scripts:/docker-entrypoint-initdb.d:ro
     ports:
       - "${CH_NODE03_HTTP:-8125}:8123"
       - "${CH_NODE03_TCP:-9002}:9000"
@@ -158,14 +170,16 @@ services:
     <<: *clickhouse-defaults
     container_name: ch-node-04
     hostname: ch-node-04
+    entrypoint: ["/etc/clickhouse-server/render-configs.sh"]
     volumes:
       - ch_node04_data:/var/lib/clickhouse
       - ch_node04_logs:/var/log/clickhouse-server
-      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
-      - ./config/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./config/render-configs.sh:/etc/clickhouse-server/render-configs.sh:ro
+      - ./config/cluster.xml.tpl:/etc/clickhouse-server/config.d/cluster.xml.tpl:ro
+      - ./config/users.xml.tpl:/etc/clickhouse-server/users.d/users.xml.tpl:ro
       - ./config/node04/server.xml:/etc/clickhouse-server/config.d/server.xml:ro
       - ./config/node04/macros.xml:/etc/clickhouse-server/config.d/macros.xml:ro
-      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./init_scripts:/docker-entrypoint-initdb.d:ro
     ports:
       - "${CH_NODE04_HTTP:-8126}:8123"
       - "${CH_NODE04_TCP:-9003}:9000"
