@@ -402,3 +402,11 @@ docker exec ch-node-01 clickhouse-client --user=dev_user --password=dev_password
   --query "SELECT * FROM system.zookeeper_connection"
 docker compose start keeper-03
 ```
+
+## Infrastructure
+
+Terraform code to provision Azure resources is in a separate repository:
+
+- **[clickhouse-infrastructure](https://github.com/sohamkarfa-lgtm/clickhouse-infrastructure)** — Deploy the infrastructure
+
+This repo contains only the application code (Docker Compose, ClickHouse configs, SQL scripts).
